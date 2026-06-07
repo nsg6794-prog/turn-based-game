@@ -1,0 +1,2 @@
+to run interface run 
+java --enable-native-access=javafx.graphics --module-path lib --add-modules javafx.controls -cp out ui.GameApplication
