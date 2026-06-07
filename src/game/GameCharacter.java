@@ -1,5 +1,5 @@
 package game;
-public class CharacterConfig {
+public class GameCharacter {
     private String name;
     private int healthPoints;
     private int maxHealthPoints;
@@ -8,7 +8,7 @@ public class CharacterConfig {
     private int intelligence;
     private int agility;
     private int strength;
-    public CharacterConfig(String name,
+    public GameCharacter(String name,
                      int healthPoints,
                      int maxHealthPoints,
                      int majicResistance,

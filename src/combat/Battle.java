@@ -1,13 +1,13 @@
 package combat;
-import game.CharacterConfig;
+import game.GameCharacter;
 import game.PlayerInput;
 public class Battle {
    
-    private CharacterConfig player;
-    private CharacterConfig enemy;
+    private GameCharacter player;
+    private GameCharacter enemy;
     private PlayerInput input;
 
-    public Battle(CharacterConfig player, CharacterConfig enemy, PlayerInput input) {
+    public Battle(GameCharacter player, GameCharacter enemy, PlayerInput input) {
         this.player = player;
         this.enemy = enemy;
         this.input = input;
@@ -53,12 +53,12 @@ public class Battle {
             }
         }
     }
-    public int calculateDamage(CharacterConfig attacker) {
+    public int calculateDamage(GameCharacter attacker) {
         int strengthBonus = attacker.getStrength() / 5;
         int damageRoll = (int)(Math.random() * 8) + 1;
         return strengthBonus + damageRoll;
     }
-    public int attack(CharacterConfig attacker, CharacterConfig defender) {
+    public int attack(GameCharacter attacker, GameCharacter defender) {
         int damage = calculateDamage(attacker);
         int damageDealt = defender.takeDamage(damage);
         System.out.println(attacker.getName() + " attacks " + defender.getName() + " for " + damageDealt + " damage!");
@@ -67,7 +67,7 @@ public class Battle {
         }
         return damageDealt;
     }
-    public int healUp(CharacterConfig healed) {
+    public int healUp(GameCharacter healed) {
         healed.heal(10);
         System.out.println(healed.getName() + " heals for 10 health points!");
         return healed.getHealthpoints();

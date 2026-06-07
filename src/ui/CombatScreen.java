@@ -1,14 +1,14 @@
 package ui;
 
 import combat.Battle;
-import game.CharacterConfig;
+import game.GameCharacter;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class CombatScreen extends VBox {
-    private final CharacterConfig player;
-    private final CharacterConfig enemy;
+    private final GameCharacter player;
+    private final GameCharacter enemy;
     private final Battle battle;
     private final Label enemyLabel = new Label();
     private final Label playerLabel = new Label();
@@ -16,7 +16,7 @@ public class CombatScreen extends VBox {
     private final Button attackButton = new Button("Attack");
     private final Button healButton = new Button("Heal");
 
-    public CombatScreen(CharacterConfig player, CharacterConfig enemy) {
+    public CombatScreen(GameCharacter player, GameCharacter enemy) {
         super(10);
         this.player = player;
         this.enemy = enemy;
