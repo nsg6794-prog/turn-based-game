@@ -8,6 +8,9 @@ public class GameCharacter {
     private int intelligence;
     private int agility;
     private int strength;
+    private int level;
+    private int experience;
+    private int experienceToNextLevel = 100; // Initial XP required for level up
     public GameCharacter(String name,
                      int healthPoints,
                      int maxHealthPoints,
@@ -15,7 +18,9 @@ public class GameCharacter {
                      int baseArmor,
                      int intelligence,
                      int agility,
-                     int strength) {
+                     int strength,
+                     int level,
+                     int experience) {
         this.name = name;
         this.healthPoints = healthPoints;
         this.maxHealthPoints = maxHealthPoints;
@@ -24,6 +29,8 @@ public class GameCharacter {
         this.intelligence = intelligence;
         this.agility = agility;
         this.strength = strength;
+        this.level = level;
+        this.experience = experience;
                      }
                      public int rollInitiative() {
                         
@@ -80,4 +87,24 @@ public class GameCharacter {
                         public int getStrength() {
                             return strength;
                         }
-                    }
+                        public void gainExperience(int amount) {
+                            experience += amount;
+                            System.out.println(name + " gained " + amount + " XP!");
+
+                            while (experience >= experienceToNextLevel) {
+                            levelUp();
+    }
+}
+                        private void levelUp() {
+                            experience -= experienceToNextLevel;
+                            level++;
+                            experienceToNextLevel += 50;
+
+                            maxHealthPoints += 10;
+                            healthPoints = maxHealthPoints;
+                            strength += 2;
+                            agility += 2;
+
+                            System.out.println(name + " leveled up to level " + level + "!");
+}
+}

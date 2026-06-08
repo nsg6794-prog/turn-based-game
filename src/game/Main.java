@@ -13,10 +13,10 @@ public class Main {
     }
 
     public static GameCharacter createPlayer() {
-        return new GameCharacter("Player", 100, 100, 20, 2, 3, 12, 15);
+        return new GameCharacter("Player", 100, 100, 20, 2, 3, 12, 15, 1, 0);
     }
 
     public static GameCharacter createEnemy() {
-        return new Enemy("Villain", 120, 120, 25, 5, 10, 8, 20);
+        return new Enemy("Villain", 120, 120, 25, 5, 10, 8, 20,1,0);
     }
 }
