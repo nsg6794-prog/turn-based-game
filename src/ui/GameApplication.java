@@ -25,11 +25,19 @@ public class GameApplication extends Application {
         GameCharacter player = Main.createPlayer();
         GameCharacter enemy = Main.createEnemy();
 
-        CombatScreen combatScreen = new CombatScreen(player, enemy);
+        CombatScreen combatScreen = new CombatScreen(player, enemy, () -> showMainMenu(stage));
         Scene scene = new Scene(combatScreen, WINDOW_WIDTH, WINDOW_HEIGHT);
         
         stage.setTitle("Game Name");
         stage.setScene(scene);
+        stage.show();
+    }
+
+    public void showMainMenu(Stage stage) {
+        MainMenu mainMenu = new MainMenu();
+
+        stage.setTitle("Turn Based Game");
+        stage.setScene(mainMenu.createMenuScene(stage, this));
         stage.show();
     }
 

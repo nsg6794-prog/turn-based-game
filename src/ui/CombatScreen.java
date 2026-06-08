@@ -15,19 +15,23 @@ public class CombatScreen extends VBox {
     private final Label combatLog = new Label();
     private final Button attackButton = new Button("Attack");
     private final Button healButton = new Button("Heal");
+    private final Button returnMenuButton = new Button("Return to Menu");
+    private final Runnable returnToMenu;
 
-    public CombatScreen(GameCharacter player, GameCharacter enemy) {
+    public CombatScreen(GameCharacter player, GameCharacter enemy, Runnable returnToMenu) {
         super(10);
         this.player = player;
         this.enemy = enemy;
+        this.returnToMenu = returnToMenu;
         this.battle = new Battle(player, enemy, () -> 1);
 
         combatLog.setWrapText(true);
 
         attackButton.setOnAction(event -> playerAttack());
         healButton.setOnAction(event -> playerHeal());
+        returnMenuButton.setOnAction(event -> this.returnToMenu.run());
 
-        getChildren().addAll(enemyLabel, combatLog, playerLabel, attackButton, healButton);
+        getChildren().addAll(enemyLabel, combatLog, playerLabel, attackButton, healButton, returnMenuButton);
         updateHealthLabels();
         combatLog.setText("A wild " + enemy.getName() + " appears!");
     }
