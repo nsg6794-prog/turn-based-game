@@ -1,4 +1,5 @@
 package combat;
+import game.Enemy;
 import game.GameCharacter;
 import game.PlayerInput;
 public class Battle {
@@ -52,6 +53,9 @@ public class Battle {
                 playerTurn();
             }
         }
+        if (player.isAlive() && !enemy.isAlive() && enemy instanceof Enemy defeatedEnemy) {
+            player.gainExperience(defeatedEnemy.getExperienceReward());
+}
     }
     public int calculateDamage(GameCharacter attacker) {
         int strengthBonus = attacker.getStrength() / 5;
