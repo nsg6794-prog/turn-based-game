@@ -12,8 +12,8 @@ public class GameApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        GameCharacter player = Main.createHero();
-        GameCharacter enemy = Main.createVillain();
+        GameCharacter player = Main.createPlayer();
+        GameCharacter enemy = Main.createEnemy();
 
         CombatScreen combatScreen = new CombatScreen(player, enemy);
         Scene scene = new Scene(combatScreen, WINDOW_WIDTH, WINDOW_HEIGHT);

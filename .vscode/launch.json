@@ -1,6 +1,14 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
+        {
+            "type": "java",
+            "name": "GameApplication",
+            "request": "launch",
+            "mainClass": "ui.GameApplication",
+            "projectName": "My pet project?_be40f20d"
+        },
         {
             "type": "java",
             "name": "Run Combat Screen",

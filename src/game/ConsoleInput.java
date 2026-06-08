@@ -14,6 +14,9 @@ public class ConsoleInput implements PlayerInput {
                 System.out.println("1. Attack");
                 System.out.println("2. Heal");
                 String input = reader.readLine();
+                if (input == null) {
+                    throw new IllegalStateException("Input ended.");
+                }
                 int choice = Integer.parseInt(input);
                 if (choice == 1 || choice == 2) {
                     return choice;

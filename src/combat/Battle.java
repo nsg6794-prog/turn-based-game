@@ -13,8 +13,8 @@ public class Battle {
         this.input = input;
     }
     public void startBattle(){
-        int playerInitiative = player.inititive();
-        int enemyInitiative = enemy.inititive();
+        int playerInitiative = player.rollInitiative();
+        int enemyInitiative = enemy.rollInitiative();
         boolean playerGoesFirst = playerInitiative >= enemyInitiative;
 
         System.out.println(player.getName() + " Rolled " + playerInitiative);
@@ -86,7 +86,7 @@ public class Battle {
         System.out.println("\n" + enemy.getName() + "'s turn:");
         int choice = (int)(Math.random() * 2) + 1;
 
-        if (choice == 1) {
+        if (choice == 1 || enemy.getHealthpoints() == enemy.getMaxHealthpoints()) {
             attack(enemy, player);
         } else if (choice == 2) {
             healUp(enemy);

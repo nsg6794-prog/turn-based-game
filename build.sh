@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-JAVAFX_LIB="/Users/nimasaeidi/Desktop/M/JavaFX/javafx-sdk-26.0.1/lib"
+JAVAFX_LIB="$(cd "$(dirname "$0")" && pwd)/lib"
 
 mkdir -p bin
 javac \

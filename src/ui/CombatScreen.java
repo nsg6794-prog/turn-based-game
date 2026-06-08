@@ -53,7 +53,7 @@ public class CombatScreen extends VBox {
     private String enemyTurn() {
         int enemyChoice = (int) (Math.random() * 2) + 1;
 
-        if (enemyChoice == 1) {
+        if (enemyChoice == 1 || enemy.getHealthpoints() == enemy.getMaxHealthpoints()) {
             int damage = battle.attack(enemy, player);
             return enemy.getName() + " attacked " + player.getName() + " for " + damage + " damage!";
         }
