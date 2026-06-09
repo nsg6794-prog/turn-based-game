@@ -1,14 +1,15 @@
 package ui;
 
 import combat.Battle;
-import game.GameCharacter;
+import game.Enemy;
+import game.Player;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class CombatScreen extends VBox {
-    private final GameCharacter player;
-    private final GameCharacter enemy;
+    private final Player player;
+    private final Enemy enemy;
     private final Battle battle;
     private final Label enemyLabel = new Label();
     private final Label playerLabel = new Label();
@@ -18,7 +19,7 @@ public class CombatScreen extends VBox {
     private final Button returnMenuButton = new Button("Return to Menu");
     private final Runnable returnToMenu;
 
-    public CombatScreen(GameCharacter player, GameCharacter enemy, Runnable returnToMenu) {
+    public CombatScreen(Player player, Enemy enemy, Runnable returnToMenu) {
         super(10);
         this.player = player;
         this.enemy = enemy;
@@ -49,7 +50,7 @@ public class CombatScreen extends VBox {
 
     private void playerHeal() {
         int healthBeforeHeal = player.getHealthpoints();
-        battle.healUp(player);
+        battle.heal(Battle.PLAYER_HEAL_AMOUNT, player);
         int healthRecovered = player.getHealthpoints() - healthBeforeHeal;
         endTurn(player.getName() + " healed for " + healthRecovered + " HP!\n" + enemyTurn());
     }
@@ -63,7 +64,7 @@ public class CombatScreen extends VBox {
         }
 
         int healthBeforeHeal = enemy.getHealthpoints();
-        battle.healUp(enemy);
+        battle.heal(Battle.ENEMY_HEAL_AMOUNT, enemy);
         int healthRecovered = enemy.getHealthpoints() - healthBeforeHeal;
         return enemy.getName() + " healed for " + healthRecovered + " HP!";
     }

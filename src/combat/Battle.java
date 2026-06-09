@@ -1,14 +1,17 @@
 package combat;
 import game.Enemy;
 import game.GameCharacter;
+import game.Player;
 import game.PlayerInput;
 public class Battle {
+    public static final int PLAYER_HEAL_AMOUNT = 10;
+    public static final int ENEMY_HEAL_AMOUNT = 5;
    
-    private GameCharacter player;
-    private GameCharacter enemy;
+    private Player player;
+    private Enemy enemy;
     private PlayerInput input;
 
-    public Battle(GameCharacter player, GameCharacter enemy, PlayerInput input) {
+    public Battle(Player player, Enemy enemy, PlayerInput input) {
         this.player = player;
         this.enemy = enemy;
         this.input = input;
@@ -53,8 +56,8 @@ public class Battle {
                 playerTurn();
             }
         }
-        if (player.isAlive() && !enemy.isAlive() && enemy instanceof Enemy defeatedEnemy) {
-            player.gainExperience(defeatedEnemy.getExperienceReward());
+        if (player.isAlive() && !enemy.isAlive()) {
+            player.gainExperience(enemy.getExperienceReward());
 }
     }
     public int calculateDamage(GameCharacter attacker) {
@@ -71,8 +74,8 @@ public class Battle {
         }
         return damageDealt;
     }
-    public int heal(GameCharacter target, int healAmount) {
-        target.heal(target, healAmount);
+    public int heal(int healAmount, GameCharacter target) {
+        target.heal(healAmount);
         System.out.println(target.getName() + " heals for " + healAmount + " health points!");
         return target.getHealthpoints();
     }
@@ -83,7 +86,7 @@ public class Battle {
         if (choice == 1) {
             attack(player, enemy);
         } else if (choice == 2) {
-            heal(player, 10);
+            heal(PLAYER_HEAL_AMOUNT, player);
         }
     }
     public void enemyTurn() {
@@ -93,7 +96,7 @@ public class Battle {
         if (choice == 1 || enemy.getHealthpoints() == enemy.getMaxHealthpoints()) {
             attack(enemy, player);
         } else if (choice == 2) {
-            heal(enemy,5);
+            heal(ENEMY_HEAL_AMOUNT, enemy);
         }
     }
 }

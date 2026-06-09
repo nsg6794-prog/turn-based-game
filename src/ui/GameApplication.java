@@ -1,7 +1,8 @@
 package ui;
 
-import game.GameCharacter;
+import game.Enemy;
 import game.Main;
+import game.Player;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -22,8 +23,8 @@ public class GameApplication extends Application {
     }
 
     public void startGame(Stage stage) {
-        GameCharacter player = Main.createPlayer();
-        GameCharacter enemy = Main.createEnemy();
+        Player player = Main.createPlayer();
+        Enemy enemy = Main.createEnemy();
 
         CombatScreen combatScreen = new CombatScreen(player, enemy, () -> showMainMenu(stage));
         Scene scene = new Scene(combatScreen, WINDOW_WIDTH, WINDOW_HEIGHT);

@@ -1,5 +1,5 @@
 package game;
-public class GameCharacter {
+public abstract class GameCharacter {
     private String name;
     private int healthPoints;
     private int maxHealthPoints;
@@ -66,12 +66,15 @@ public class GameCharacter {
                      public int getMaxHealthpoints() {
                          return maxHealthPoints;
                      }
-                     public int heal(GameCharacter target, int healAmount) {
-                         target.healthPoints += healAmount;
-                         if (target.healthPoints > target.maxHealthPoints) {
-                             target.healthPoints = target.maxHealthPoints;
+                     public int heal(int healAmount) {
+                         if (healAmount < 0) {
+                             throw new IllegalArgumentException("Heal amount cannot be negative");
                          }
-                         return target.healthPoints;
+                         healthPoints += healAmount;
+                         if (healthPoints > maxHealthPoints) {
+                             healthPoints = maxHealthPoints;
+                         }
+                         return healthPoints;
                      }
                      public int takeMagicDamage(int damage) {
                          int damageAfterResistance = (int) (damage * (1 - (magicResistance / 100.0)));
