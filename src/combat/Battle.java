@@ -71,10 +71,10 @@ public class Battle {
         }
         return damageDealt;
     }
-    public int healUp(GameCharacter healed) {
-        healed.heal(10);
-        System.out.println(healed.getName() + " heals for 10 health points!");
-        return healed.getHealthpoints();
+    public int heal(GameCharacter target, int healAmount) {
+        target.heal(target, healAmount);
+        System.out.println(target.getName() + " heals for " + healAmount + " health points!");
+        return target.getHealthpoints();
     }
     public void playerTurn() {
         System.out.println("\n" + player.getName() + "'s turn:");
@@ -83,7 +83,7 @@ public class Battle {
         if (choice == 1) {
             attack(player, enemy);
         } else if (choice == 2) {
-            healUp(player);
+            heal(player, 10);
         }
     }
     public void enemyTurn() {
@@ -93,7 +93,7 @@ public class Battle {
         if (choice == 1 || enemy.getHealthpoints() == enemy.getMaxHealthpoints()) {
             attack(enemy, player);
         } else if (choice == 2) {
-            healUp(enemy);
+            heal(enemy,5);
         }
     }
 }

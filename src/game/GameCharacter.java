@@ -11,6 +11,7 @@ public class GameCharacter {
     private int level;
     private int experience;
     private int experienceToNextLevel = 100; // Initial XP required for level up
+    
     public GameCharacter(String name,
                      int healthPoints,
                      int maxHealthPoints,
@@ -65,12 +66,12 @@ public class GameCharacter {
                      public int getMaxHealthpoints() {
                          return maxHealthPoints;
                      }
-                     public int heal(int healAmount) {
-                         healthPoints += healAmount;
-                         if (healthPoints > maxHealthPoints) {
-                             healthPoints = maxHealthPoints;
+                     public int heal(GameCharacter target, int healAmount) {
+                         target.healthPoints += healAmount;
+                         if (target.healthPoints > target.maxHealthPoints) {
+                             target.healthPoints = target.maxHealthPoints;
                          }
-                         return healthPoints;
+                         return target.healthPoints;
                      }
                      public int takeMagicDamage(int damage) {
                          int damageAfterResistance = (int) (damage * (1 - (magicResistance / 100.0)));
