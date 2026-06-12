@@ -1,6 +1,7 @@
 package items;
+
 import game.GameCharacter;
-import game.Player;
+
 public class HPPot extends Potion {
     int healAmount;
 
@@ -12,9 +13,11 @@ public class HPPot extends Potion {
     public int getHealAmount() {
         return healAmount;
     }
-    public void consume() {
-        // Logic to heal the player by healAmount
-        System.out.println("You consume the " + getName() + " and restore " + healAmount + " HP!");
-        heal(healAmount + getRarityBonus(), Player);
+    public void consume(GameCharacter target) {
+    int totalHeal = healAmount + getRarityBonus();
+    target.heal(totalHeal);
+
+    System.out.println("You consume the " + getName()
+        + " and restore " + totalHeal + " HP!");
     }
 }
