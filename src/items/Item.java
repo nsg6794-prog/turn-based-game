@@ -1,10 +1,10 @@
 package items;
 
 public class Item {
-    private String name;
-    private String description;
-    private int value;
-    private char rarity; // Common, Uncommon, Rare, Epic, Legendary 
+    private final String name;
+    private final String description;
+    private final int value;
+    private final char rarity; // Common, Uncommon, Rare, Epic, Legendary 
 
     public Item(String name, String description, int value, char rarity) {
         this.name = name;

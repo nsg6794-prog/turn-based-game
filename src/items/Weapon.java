@@ -1,9 +1,9 @@
 package items;
 
 public class Weapon extends Item {
-    private int damage;
-    private String damageType; // e.g., Melee, Ranged, Magic
-    private String weaponType; // e.g., Sword, Bow, Staff
+    final private int damage;
+    final private String damageType; // e.g., Melee, Ranged, Magic
+    final private String weaponType; // e.g., Sword, Bow, Staff
     
 
     public Weapon(String name, String description, int value, char rarity,
