@@ -3,6 +3,7 @@ package game;
 public class Enemy extends GameCharacter {
 
     private int experienceReward;
+    private int goldReward;
 
     public Enemy(String name,
                  int healthPoints,
@@ -14,7 +15,7 @@ public class Enemy extends GameCharacter {
                  int strength,
                 int experienceReward) {
 
-        super(name, healthPoints, maxHealthPoints, magicResistance, baseArmor, intelligence, agility, strength,1,0);
+        super(name, healthPoints, maxHealthPoints, magicResistance, baseArmor, intelligence, agility, strength);
         this.experienceReward = experienceReward;
 
     }

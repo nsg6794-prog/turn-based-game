@@ -8,20 +8,15 @@ public abstract class GameCharacter {
     private int intelligence;
     private int agility;
     private int strength;
-    private int level;
-    private int experience;
-    private int experienceToNextLevel = 100; // Initial XP required for level up
-    
+
     public GameCharacter(String name,
-                     int healthPoints,
-                     int maxHealthPoints,
-                     int magicResistance,
-                     int baseArmor,
-                     int intelligence,
-                     int agility,
-                     int strength,
-                     int level,
-                     int experience) {
+                            int healthPoints,
+                            int maxHealthPoints,
+                            int magicResistance,
+                            int baseArmor,
+                            int intelligence,
+                            int agility,
+                            int strength) {
         this.name = name;
         this.healthPoints = healthPoints;
         this.maxHealthPoints = maxHealthPoints;
@@ -30,8 +25,6 @@ public abstract class GameCharacter {
         this.intelligence = intelligence;
         this.agility = agility;
         this.strength = strength;
-        this.level = level;
-        this.experience = experience;
                      }
                      public int rollInitiative() {
                         
@@ -91,24 +84,14 @@ public abstract class GameCharacter {
                         public int getStrength() {
                             return strength;
                         }
-                        public void gainExperience(int amount) {
-                            experience += amount;
-                            System.out.println(name + " gained " + amount + " XP!");
-
-                            while (experience >= experienceToNextLevel) {
-                            levelUp();
-    }
-}
-                        private void levelUp() {
-                            experience -= experienceToNextLevel;
-                            level++;
-                            experienceToNextLevel += 50;
-
-                            maxHealthPoints += 10;
+                        protected void increaseMaxHealthPoints(int amount) {
+                            maxHealthPoints += amount;
                             healthPoints = maxHealthPoints;
-                            strength += 2;
-                            agility += 2;
-
-                            System.out.println(name + " leveled up to level " + level + "!");
-}
+                        }
+                        protected void increaseStrength(int amount) {
+                            strength += amount;
+                        }
+                        protected void increaseAgility(int amount) {
+                            agility += amount;
+                        }
 }
