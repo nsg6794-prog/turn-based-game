@@ -2,6 +2,7 @@ package ui;
 
 import combat.Battle;
 import game.Enemy;
+import game.EncounterManager;
 import game.Player;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,12 +20,12 @@ public class CombatScreen extends VBox {
     private final Button returnMenuButton = new Button("Return to Menu");
     private final Runnable returnToMenu;
 
-    public CombatScreen(Player player, Enemy enemy, Runnable returnToMenu) {
+    public CombatScreen(Player player, EncounterManager encounterManager, Runnable returnToMenu) {
         super(10);
         this.player = player;
-        this.enemy = enemy;
+        this.enemy = encounterManager.getCurrentEnemy();
         this.returnToMenu = returnToMenu;
-        this.battle = new Battle(player, enemy, () -> 1);
+        this.battle = new Battle(player, this.enemy, () -> 1);
 
         combatLog.setWrapText(true);
 

@@ -1,6 +1,6 @@
 package ui;
 
-import game.Enemy;
+import game.EncounterManager;
 import game.Main;
 import game.Player;
 
@@ -24,9 +24,9 @@ public class GameApplication extends Application {
 
     public void startGame(Stage stage) {
         Player player = Main.createPlayer();
-        Enemy enemy = Main.createEnemy();
+        EncounterManager encounterManager = new EncounterManager();
 
-        CombatScreen combatScreen = new CombatScreen(player, enemy, () -> showMainMenu(stage));
+        CombatScreen combatScreen = new CombatScreen(player, encounterManager, () -> showMainMenu(stage));
         Scene scene = new Scene(combatScreen, WINDOW_WIDTH, WINDOW_HEIGHT);
         
         stage.setTitle("Game Name");
