@@ -57,8 +57,12 @@ public class Battle {
             }
         }
         if (player.isAlive() && !enemy.isAlive()) {
-            player.gainExperience(enemy.getExperienceReward());
-}
+            awardVictoryRewards();
+        }
+    }
+    public void awardVictoryRewards() {
+        player.gainExperience(enemy.getExperienceReward());
+        player.gainGold(enemy.getGoldReward());
     }
     public int calculateDamage(GameCharacter attacker) {
         int strengthBonus = attacker.getStrength() / 5;

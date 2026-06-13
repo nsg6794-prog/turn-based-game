@@ -1,9 +1,14 @@
 package game;
 
 import items.Inventory;
-import java.util.Scanner;
 
 public class Player extends GameCharacter {
+    public enum LevelUpReward {
+        MAX_HEALTH,
+        STRENGTH,
+        AGILITY
+    }
+
     private static final int INITIAL_EXPERIENCE_TO_NEXT_LEVEL = 100;
     private static final int EXPERIENCE_INCREASE_PER_LEVEL = 50;
 
@@ -12,6 +17,7 @@ public class Player extends GameCharacter {
     private int experience;
     private int experienceToNextLevel;
     private int gold;
+    private int pendingLevelUpRewards;
 
     public Player(String name,
                   int healthPoints,
@@ -40,23 +46,46 @@ public class Player extends GameCharacter {
         }
     }
 
+    public void gainGold(int amount) {
+        gold += amount;
+        System.out.println(getName() + " gained " + amount + " gold!");
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public boolean hasPendingLevelUpReward() {
+        return pendingLevelUpRewards > 0;
+    }
+
+    public int getPendingLevelUpRewards() {
+        return pendingLevelUpRewards;
+    }
+
+    public void chooseLevelUpReward(LevelUpReward reward) {
+        if (!hasPendingLevelUpReward()) {
+            throw new IllegalStateException("No level-up reward is available.");
+        }
+
+        switch (reward) {
+            case MAX_HEALTH -> increaseMaxHealthPoints(10);
+            case STRENGTH -> increaseStrength(2);
+            case AGILITY -> increaseAgility(2);
+        }
+
+        pendingLevelUpRewards--;
+    }
+
     private void levelUp() {
         experience -= experienceToNextLevel;
         level++;
         experienceToNextLevel += EXPERIENCE_INCREASE_PER_LEVEL;
-        Scanner scanner = new Scanner(System.in);
+        pendingLevelUpRewards++;
         System.out.println(getName() + " leveled up to level " + level + "!");
-        System.out.println("Choose a stat to increase: ");
-        System.out.println("1. Health Points (+10)");
-        System.out.println("2. Strength (+2)");
-        System.out.println("3. Agility (+2)");
-        int choice = scanner.nextInt();
-        switch (choice) {
-            case 1 ->  increaseMaxHealthPoints(10);
-            case 2 -> increaseStrength(2);
-            case 3 -> increaseAgility(2);
-            default -> System.out.println("Invalid choice. No stat increased.");
-
-        }
     }
 }

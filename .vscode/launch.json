@@ -11,13 +11,6 @@
         },
         {
             "type": "java",
-            "name": "Run Combat Screen",
-            "request": "launch",
-            "mainClass": "ui.CombatScreen",
-            "vmArgs": "--module-path /Users/nimasaeidi/Desktop/M/JavaFX/javafx-sdk-26.0.1/lib --add-modules javafx.controls"
-        },
-        {
-            "type": "java",
             "name": "Run Console Game",
             "request": "launch",
             "mainClass": "game.Main"

@@ -26,12 +26,27 @@ public class GameApplication extends Application {
         Player player = Main.createPlayer();
         EncounterManager encounterManager = new EncounterManager();
 
-        CombatScreen combatScreen = new CombatScreen(player, encounterManager, () -> showMainMenu(stage));
-        Scene scene = new Scene(combatScreen, WINDOW_WIDTH, WINDOW_HEIGHT);
-        
+        showCombatScreen(stage, player, encounterManager);
+    }
+
+    private void showCombatScreen(Stage stage, Player player, EncounterManager encounterManager) {
+        Scene[] combatScene = new Scene[1];
+        CombatScreen combatScreen = new CombatScreen(
+                player,
+                encounterManager,
+                () -> showCombatScreen(stage, player, encounterManager),
+                () -> showLevelUpRewardScreen(stage, player, () -> stage.setScene(combatScene[0])),
+                () -> showMainMenu(stage));
+        combatScene[0] = new Scene(combatScreen, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         stage.setTitle("Game Name");
-        stage.setScene(scene);
+        stage.setScene(combatScene[0]);
         stage.show();
+    }
+
+    private void showLevelUpRewardScreen(Stage stage, Player player, Runnable returnToCombat) {
+        LevelUpRewardScreen rewardScreen = new LevelUpRewardScreen(player, returnToCombat);
+        stage.setScene(new Scene(rewardScreen, WINDOW_WIDTH, WINDOW_HEIGHT));
     }
 
     public void showMainMenu(Stage stage) {
