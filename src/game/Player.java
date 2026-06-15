@@ -1,6 +1,8 @@
 package game;
 
 import items.Inventory;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends GameCharacter {
     public enum LevelUpReward {
@@ -18,6 +20,7 @@ public class Player extends GameCharacter {
     private int experienceToNextLevel;
     private int gold;
     private int pendingLevelUpRewards;
+    private final List<Runnable> statsChangeListeners = new ArrayList<>();
 
     public Player(String name,
                   int healthPoints,
@@ -44,11 +47,14 @@ public class Player extends GameCharacter {
         while (experience >= experienceToNextLevel) {
             levelUp();
         }
+
+        notifyStatsChanged();
     }
 
     public void gainGold(int amount) {
         gold += amount;
         System.out.println(getName() + " gained " + amount + " gold!");
+        notifyStatsChanged();
     }
 
     public int getGold() {
@@ -57,6 +63,10 @@ public class Player extends GameCharacter {
 
     public int getLevel() {
         return level;
+    }
+
+    public int getExperience() {
+        return experience;
     }
 
     public boolean hasPendingLevelUpReward() {
@@ -79,6 +89,23 @@ public class Player extends GameCharacter {
         }
 
         pendingLevelUpRewards--;
+        notifyStatsChanged();
+    }
+
+    public void addStatsChangeListener(Runnable listener) {
+        if (!statsChangeListeners.contains(listener)) {
+            statsChangeListeners.add(listener);
+        }
+    }
+
+    public void removeStatsChangeListener(Runnable listener) {
+        statsChangeListeners.remove(listener);
+    }
+
+    private void notifyStatsChanged() {
+        for (Runnable listener : List.copyOf(statsChangeListeners)) {
+            listener.run();
+        }
     }
 
     private void levelUp() {

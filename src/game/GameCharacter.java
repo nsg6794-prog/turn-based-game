@@ -84,6 +84,12 @@ public abstract class GameCharacter {
                         public int getStrength() {
                             return strength;
                         }
+                        public int getAgility() {
+                            return agility;
+                        }
+                        public int getIntelligence() {
+                            return intelligence;
+                        }
                         protected void increaseMaxHealthPoints(int amount) {
                             maxHealthPoints += amount;
                             healthPoints = maxHealthPoints;

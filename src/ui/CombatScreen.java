@@ -4,16 +4,19 @@ import combat.Battle;
 import game.Enemy;
 import game.EncounterManager;
 import game.Player;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
+import javafx.scene.text.TextAlignment;
 
 public class CombatScreen extends VBox {
     private final Player player;
     private final Enemy enemy;
     private final EncounterManager encounterManager;
     private final Battle battle;
+    private final PlayerStatsPanel playerStatsPanel;
     private final Label enemyLabel = new Label();
     private final Label playerLabel = new Label();
     private final Label combatLog = new Label();
@@ -37,20 +40,31 @@ public class CombatScreen extends VBox {
         this.returnToMenu = returnToMenu;
         this.showLevelUpRewards = showLevelUpRewards;
         this.battle = new Battle(player, this.enemy, () -> 1);
+        this.playerStatsPanel = new PlayerStatsPanel(player);
 
+        setAlignment(Pos.TOP_CENTER);
+        enemyLabel.setTextAlignment(TextAlignment.CENTER);
+        playerLabel.setTextAlignment(TextAlignment.CENTER);
         combatLog.setWrapText(true);
+        combatLog.setTextAlignment(TextAlignment.CENTER);
+        combatLog.setAlignment(Pos.CENTER);
+        combatLog.setMaxWidth(Double.MAX_VALUE);
 
         attackButton.setOnAction(event -> playerAttack());
         healButton.setOnAction(event -> playerHeal());
         nextEncounterButton.setOnAction(event -> {
+            playerStatsPanel.dispose();
             encounterManager.moveToNextEncounter();
             loadNextEncounter.run();
         });
-        returnMenuButton.setOnAction(event -> this.returnToMenu.run());
+        returnMenuButton.setOnAction(event -> {
+            playerStatsPanel.dispose();
+            this.returnToMenu.run();
+        });
         nextEncounterButton.setVisible(false);
         nextEncounterButton.setManaged(false);
 
-        getChildren().addAll(enemyLabel, combatLog, playerLabel, attackButton, healButton,
+        getChildren().addAll(playerStatsPanel, enemyLabel, combatLog, playerLabel, attackButton, healButton,
                 nextEncounterButton, returnMenuButton);
         updateHealthLabels();
         combatLog.setText("A wild " + enemy.getName() + " appears!");
@@ -113,6 +127,7 @@ public class CombatScreen extends VBox {
             }
         }
 
+        playerStatsPanel.refresh();
         combatLog.setText(message);
 
         if (levelUpRewardAvailable) {
@@ -122,6 +137,7 @@ public class CombatScreen extends VBox {
 
     void restoreAfterLevelUp() {
         updateHealthLabels();
+        playerStatsPanel.refresh();
         updatePostVictoryControls();
     }
 
