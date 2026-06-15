@@ -31,12 +31,17 @@ public class GameApplication extends Application {
 
     private void showCombatScreen(Stage stage, Player player, EncounterManager encounterManager) {
         Scene[] combatScene = new Scene[1];
+        CombatScreen[] combatScreenReference = new CombatScreen[1];
         CombatScreen combatScreen = new CombatScreen(
                 player,
                 encounterManager,
                 () -> showCombatScreen(stage, player, encounterManager),
-                () -> showLevelUpRewardScreen(stage, player, () -> stage.setScene(combatScene[0])),
+                () -> showLevelUpRewardScreen(stage, player, () -> {
+                    combatScreenReference[0].restoreAfterLevelUp();
+                    stage.setScene(combatScene[0]);
+                }),
                 () -> showMainMenu(stage));
+        combatScreenReference[0] = combatScreen;
         combatScene[0] = new Scene(combatScreen, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         stage.setTitle("Game Name");

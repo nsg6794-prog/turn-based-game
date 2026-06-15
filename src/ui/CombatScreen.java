@@ -90,6 +90,7 @@ public class CombatScreen extends VBox {
 
     private void endTurn(String message) {
         updateHealthLabels();
+        boolean levelUpRewardAvailable = false;
 
         if (!player.isAlive()) {
             message += "\nDefeat!";
@@ -98,26 +99,37 @@ public class CombatScreen extends VBox {
             if (!victoryHandled) {
                 battle.awardVictoryRewards();
                 victoryHandled = true;
-
-                if (player.hasPendingLevelUpReward()) {
-                    Platform.runLater(showLevelUpRewards);
-                }
+                levelUpRewardAvailable = player.hasPendingLevelUpReward();
             }
 
             message += "\nVictory!"
                     + "\nRewards: " + enemy.getExperienceReward() + " XP and "
                     + enemy.getGoldReward() + " gold.";
             setActionsDisabled(true);
+            updatePostVictoryControls();
 
-            if (encounterManager.hasNextEncounter()) {
-                nextEncounterButton.setVisible(true);
-                nextEncounterButton.setManaged(true);
-            } else {
+            if (!encounterManager.hasNextEncounter()) {
                 message += "\nAll encounters complete!";
             }
         }
 
         combatLog.setText(message);
+
+        if (levelUpRewardAvailable) {
+            Platform.runLater(showLevelUpRewards);
+        }
+    }
+
+    void restoreAfterLevelUp() {
+        updateHealthLabels();
+        updatePostVictoryControls();
+    }
+
+    private void updatePostVictoryControls() {
+        boolean nextEncounterAvailable = !enemy.isAlive() && encounterManager.hasNextEncounter();
+        nextEncounterButton.setVisible(nextEncounterAvailable);
+        nextEncounterButton.setManaged(nextEncounterAvailable);
+        nextEncounterButton.setDisable(!nextEncounterAvailable);
     }
 
     private void updateHealthLabels() {

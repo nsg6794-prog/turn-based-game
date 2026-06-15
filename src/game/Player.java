@@ -32,8 +32,8 @@ public class Player extends GameCharacter {
         super(name, healthPoints, maxHealthPoints, magicResistance, baseArmor,
                 intelligence, agility, strength);
         this.inventory = new Inventory();
-        this.level = 1;
-        this.experience = 0;
+        this.level = level;
+        this.experience = experience;
         this.experienceToNextLevel = INITIAL_EXPERIENCE_TO_NEXT_LEVEL;
     }
 
