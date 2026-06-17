@@ -7,14 +7,14 @@ import javafx.geometry.Pos;
 import javafx.stage.Stage;
 
 public class MainMenu {
-    public Scene createMenuScene(Stage stage, GameApplication gameApplication) {
+    public Scene createMenuScene(Stage stage) {
             
         Button startButton = new Button("Start new Game");
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Quit");
 
         startButton.setOnAction(e -> {
-            gameApplication.startGame(stage);
+            GameApplication.startGame(stage);
         });
         
         loadButton.setOnAction(e -> {

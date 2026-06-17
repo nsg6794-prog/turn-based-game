@@ -4,8 +4,17 @@ set -euo pipefail
 JAVAFX_LIB="$(cd "$(dirname "$0")" && pwd)/lib"
 
 mkdir -p bin
-javac \
-  --module-path "$JAVAFX_LIB" \
-  --add-modules javafx.controls \
-  -d bin \
-  src/game/*.java src/combat/*.java src/items/*.java src/ui/*.java
+
+compile_to() {
+  local output_dir="$1"
+
+  mkdir -p "$output_dir"
+  javac \
+    --module-path "$JAVAFX_LIB" \
+    --add-modules javafx.controls \
+    -d "$output_dir" \
+    src/game/*.java src/combat/*.java src/items/*.java src/ui/*.java
+}
+
+compile_to bin
+compile_to out

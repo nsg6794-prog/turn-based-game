@@ -9,6 +9,9 @@ public class HPPot extends Potion {
         super(name, description, value, rarity);
         this.healAmount = healAmount;
     }
+    private int getPrice() {
+        return super.getValue();
+    }
 
     public int getHealAmount() {
         return healAmount;

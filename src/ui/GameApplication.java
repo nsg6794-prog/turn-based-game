@@ -3,14 +3,15 @@ package ui;
 import game.EncounterManager;
 import game.Main;
 import game.Player;
+import items.Shop;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class GameApplication extends Application {
-    private static final int WINDOW_WIDTH = 800;
-    private static final int WINDOW_HEIGHT = 600;
+    static final int WINDOW_WIDTH = 800;
+    static final int WINDOW_HEIGHT = 600;
 
 
     @Override
@@ -18,24 +19,35 @@ public class GameApplication extends Application {
         MainMenu mainMenu = new MainMenu();
 
         stage.setTitle("Turn Based Game");
-        stage.setScene(mainMenu.createMenuScene(stage, this));
+        stage.setScene(mainMenu.createMenuScene(stage));
         stage.show();
     }
 
-    public void startGame(Stage stage) {
+    public static void startGame(Stage stage) {
         Player player = Main.createPlayer();
         EncounterManager encounterManager = new EncounterManager();
 
         showCombatScreen(stage, player, encounterManager);
     }
 
-    private void showCombatScreen(Stage stage, Player player, EncounterManager encounterManager) {
+    static void showCombatScreen(Stage stage, Player player, EncounterManager encounterManager) {
         Scene[] combatScene = new Scene[1];
         CombatScreen[] combatScreenReference = new CombatScreen[1];
         CombatScreen combatScreen = new CombatScreen(
                 player,
                 encounterManager,
-                () -> showCombatScreen(stage, player, encounterManager),
+                () -> showShopScreen(stage, player, encounterManager, () -> {
+                    combatScreenReference[0].restoreAfterInventory();
+                    stage.setScene(combatScene[0]);
+                }),
+                () -> {
+                    encounterManager.moveToNextEncounter();
+                    showCombatScreen(stage, player, encounterManager);
+                },
+                () -> showInventoryScreen(stage, player, () -> {
+                    combatScreenReference[0].restoreAfterInventory();
+                    stage.setScene(combatScene[0]);
+                }),
                 () -> showLevelUpRewardScreen(stage, player, () -> {
                     combatScreenReference[0].restoreAfterLevelUp();
                     stage.setScene(combatScene[0]);
@@ -49,16 +61,30 @@ public class GameApplication extends Application {
         stage.show();
     }
 
-    private void showLevelUpRewardScreen(Stage stage, Player player, Runnable returnToCombat) {
+    private static void showShopScreen(Stage stage,
+                                       Player player,
+                                       EncounterManager encounterManager,
+                                       Runnable returnToCombat) {
+        Shop shop = new Shop();
+        shop.initializeStock();
+        stage.setScene(new Scene(new ShopScreen(player, shop, stage, encounterManager, returnToCombat),
+                WINDOW_WIDTH, WINDOW_HEIGHT));
+    }
+
+    private static void showInventoryScreen(Stage stage, Player player, Runnable returnToCombat) {
+        stage.setScene(new Scene(new InventoryUI(player, returnToCombat), WINDOW_WIDTH, WINDOW_HEIGHT));
+    }
+
+    private static void showLevelUpRewardScreen(Stage stage, Player player, Runnable returnToCombat) {
         LevelUpRewardScreen rewardScreen = new LevelUpRewardScreen(player, returnToCombat);
         stage.setScene(new Scene(rewardScreen, WINDOW_WIDTH, WINDOW_HEIGHT));
     }
 
-    public void showMainMenu(Stage stage) {
+    public static void showMainMenu(Stage stage) {
         MainMenu mainMenu = new MainMenu();
 
         stage.setTitle("Turn Based Game");
-        stage.setScene(mainMenu.createMenuScene(stage, this));
+        stage.setScene(mainMenu.createMenuScene(stage));
         stage.show();
     }
 

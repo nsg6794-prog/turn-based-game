@@ -4,9 +4,11 @@ import combat.Battle;
 import game.Enemy;
 import game.EncounterManager;
 import game.Player;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
 import javafx.scene.text.TextAlignment;
@@ -22,6 +24,8 @@ public class CombatScreen extends VBox {
     private final Label combatLog = new Label();
     private final Button attackButton = new Button("Attack");
     private final Button healButton = new Button("Heal");
+    private final Button inventoryButton = new Button("Go to Inventory");
+    private final Button visitShopButton = new Button("Visit Shop");
     private final Button nextEncounterButton = new Button("Next Encounter");
     private final Button returnMenuButton = new Button("Return to Menu");
     private final Runnable returnToMenu;
@@ -31,7 +35,9 @@ public class CombatScreen extends VBox {
 
     public CombatScreen(Player player,
                         EncounterManager encounterManager,
+                        Runnable showShop,
                         Runnable loadNextEncounter,
+                        Runnable showInventory,
                         Runnable showLevelUpRewards,
                         Runnable returnToMenu) {
         super(10);
@@ -53,20 +59,32 @@ public class CombatScreen extends VBox {
 
         attackButton.setOnAction(event -> playerAttack());
         healButton.setOnAction(event -> playerHeal());
+        inventoryButton.setOnAction(event -> showInventory.run());
+        visitShopButton.setOnAction(event -> {
+            showShop.run();
+        });
         nextEncounterButton.setOnAction(event -> {
             playerStatsPanel.dispose();
-            encounterManager.moveToNextEncounter();
             loadNextEncounter.run();
         });
         returnMenuButton.setOnAction(event -> {
             playerStatsPanel.dispose();
             this.returnToMenu.run();
         });
+        visitShopButton.setVisible(false);
+        visitShopButton.setManaged(false);
         nextEncounterButton.setVisible(false);
         nextEncounterButton.setManaged(false);
 
-        getChildren().addAll(playerStatsPanel, enemyLabel, combatLog, playerLabel, attackButton, healButton,
-                nextEncounterButton, returnMenuButton);
+        VBox statsAndInventory = new VBox(5, playerStatsPanel, inventoryButton);
+        statsAndInventory.setAlignment(Pos.TOP_LEFT);
+        statsAndInventory.setPadding(new Insets(0, 0, 0, 10));
+        HBox topBar = new HBox(statsAndInventory);
+        topBar.setAlignment(Pos.TOP_LEFT);
+        topBar.setMaxWidth(Double.MAX_VALUE);
+
+        getChildren().addAll(topBar, enemyLabel, combatLog, playerLabel, attackButton, healButton,
+                visitShopButton, nextEncounterButton, returnMenuButton);
         updateHealthLabels();
         combatLog.setText("A wild " + enemy.getName() + " appears!");
     }
@@ -144,11 +162,20 @@ public class CombatScreen extends VBox {
         updatePostVictoryControls();
     }
 
+    void restoreAfterInventory() {
+        updateHealthLabels();
+        playerStatsPanel.refresh();
+        updatePostVictoryControls();
+    }
+
     private void updatePostVictoryControls() {
-        boolean nextEncounterAvailable = !enemy.isAlive() && encounterManager.hasNextEncounter();
-        nextEncounterButton.setVisible(nextEncounterAvailable);
-        nextEncounterButton.setManaged(nextEncounterAvailable);
-        nextEncounterButton.setDisable(!nextEncounterAvailable);
+        boolean shopAvailable = !enemy.isAlive() && encounterManager.hasNextEncounter();
+        visitShopButton.setVisible(shopAvailable);
+        visitShopButton.setManaged(shopAvailable);
+        visitShopButton.setDisable(!shopAvailable);
+        nextEncounterButton.setVisible(shopAvailable);
+        nextEncounterButton.setManaged(shopAvailable);
+        nextEncounterButton.setDisable(!shopAvailable);
     }
 
     private void updateHealthLabels() {

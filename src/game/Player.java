@@ -1,6 +1,7 @@
 package game;
 
 import items.Inventory;
+import items.Weapon;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,4 +118,17 @@ public class Player extends GameCharacter {
         pendingLevelUpRewards++;
         System.out.println(getName() + " leveled up to level " + level + "!");
     }
+    public Inventory getInventory() {
+    return inventory;
+    }
+    public boolean spendGold(int amount) {
+    if (gold < amount) {
+        return false;
+    }
+
+    gold -= amount;
+    return true;
+    }
+    private Weapon equippedWeapon;
+    private Inventory inventory1 = new Inventory();
 }
