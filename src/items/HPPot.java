@@ -20,4 +20,7 @@ public class HPPot extends Potion {
     System.out.println("You consume the " + getName()
         + " and restore " + totalHeal + " HP!");
     }
+    public static HPPot createHPPot(String name, String description, int value, char rarity, int healAmount) {
+        return new HPPot(name, description, value, rarity, healAmount);
+    }
 }

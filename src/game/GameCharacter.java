@@ -100,4 +100,7 @@ public abstract class GameCharacter {
                         protected void increaseAgility(int amount) {
                             agility += amount;
                         }
+                        protected void increaseIntelligence(int amount) {
+                            intelligence += amount;
+                        }
 }

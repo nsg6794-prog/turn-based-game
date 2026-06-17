@@ -1,6 +1,18 @@
 package items;
 
+import java.util.ArrayList;
+
 public class Inventory {
-    // add some items i dont feel loke it rn
+    ArrayList<Item> items;
+
+    public Inventory() {
+        items = new ArrayList<Item>();
+    }
+    public void addItem(Item item) {
+        items.add(item);
+    }
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
 
 }

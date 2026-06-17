@@ -27,6 +27,7 @@ public class CombatScreen extends VBox {
     private final Runnable returnToMenu;
     private final Runnable showLevelUpRewards;
     private boolean victoryHandled;
+    
 
     public CombatScreen(Player player,
                         EncounterManager encounterManager,
@@ -116,8 +117,10 @@ public class CombatScreen extends VBox {
                 levelUpRewardAvailable = player.hasPendingLevelUpReward();
             }
 
-            message += "\nVictory!"
-                    + "\nRewards: " + enemy.getExperienceReward() + " XP and "
+            message += """
+
+                       Victory!
+                       Rewards: """ + enemy.getExperienceReward() + " XP and "
                     + enemy.getGoldReward() + " gold.";
             setActionsDisabled(true);
             updatePostVictoryControls();

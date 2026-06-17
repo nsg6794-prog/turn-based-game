@@ -8,7 +8,8 @@ public class Player extends GameCharacter {
     public enum LevelUpReward {
         MAX_HEALTH,
         STRENGTH,
-        AGILITY
+        AGILITY,
+        INTELLIGENCE
     }
 
     private static final int INITIAL_EXPERIENCE_TO_NEXT_LEVEL = 100;
@@ -86,6 +87,7 @@ public class Player extends GameCharacter {
             case MAX_HEALTH -> increaseMaxHealthPoints(10);
             case STRENGTH -> increaseStrength(2);
             case AGILITY -> increaseAgility(2);
+            case INTELLIGENCE -> increaseIntelligence(2);
         }
 
         pendingLevelUpRewards--;

@@ -19,13 +19,15 @@ public class LevelUpRewardScreen extends VBox {
         Button healthButton = new Button("Health Points (+10)");
         Button strengthButton = new Button("Strength (+2)");
         Button agilityButton = new Button("Agility (+2)");
+        Button intelligenceButton = new Button("Intelligence (+2)");
 
         healthButton.setOnAction(event -> chooseReward(Player.LevelUpReward.MAX_HEALTH));
         strengthButton.setOnAction(event -> chooseReward(Player.LevelUpReward.STRENGTH));
         agilityButton.setOnAction(event -> chooseReward(Player.LevelUpReward.AGILITY));
+        intelligenceButton.setOnAction(event -> chooseReward(Player.LevelUpReward.INTELLIGENCE));
 
         setAlignment(Pos.CENTER);
-        getChildren().addAll(title, healthButton, strengthButton, agilityButton);
+        getChildren().addAll(title, healthButton, strengthButton, agilityButton, intelligenceButton);
         updateTitle();
     }
 
