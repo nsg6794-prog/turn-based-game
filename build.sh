@@ -14,6 +14,11 @@ compile_to() {
     --add-modules javafx.controls \
     -d "$output_dir" \
     src/game/*.java src/combat/*.java src/items/*.java src/ui/*.java
+
+  if [ -d assets ]; then
+    mkdir -p "$output_dir/assets"
+    cp assets/* "$output_dir/assets/"
+  fi
 }
 
 compile_to bin

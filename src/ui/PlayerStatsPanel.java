@@ -53,7 +53,7 @@ public class PlayerStatsPanel extends GridPane {
     public void refresh() {
         levelValue.setText(Integer.toString(player.getLevel()));
         experienceValue.setText(Integer.toString(player.getExperience()));
-        goldValue.setText(Integer.toString(player.getGold()));
+        ImageAssets.setGoldAmount(goldValue, player.getGold());
         strengthValue.setText(Integer.toString(player.getStrength()));
         agilityValue.setText(Integer.toString(player.getAgility()));
         intelligenceValue.setText(Integer.toString(player.getIntelligence()));

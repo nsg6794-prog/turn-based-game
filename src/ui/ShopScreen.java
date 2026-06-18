@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class ShopScreen extends BorderPane {
@@ -64,7 +65,7 @@ public class ShopScreen extends BorderPane {
     }
 
     private void refreshShop() {
-        goldLabel.setText("Gold: " + player.getGold());
+        ImageAssets.setGoldAmount(goldLabel, "Gold: ", player.getGold());
         stockList.getChildren().clear();
 
         if (shop.getStock().isEmpty()) {
@@ -78,17 +79,27 @@ public class ShopScreen extends BorderPane {
     }
 
     private HBox createItemRow(Item item) {
-        Label itemLabel = new Label(item.getName() + " - " + item.getValue() + " gold");
+        Label itemLabel = new Label(item.getName());
+        Label priceLabel = new Label();
+        ImageAssets.setGoldAmount(priceLabel, item.getValue());
+        HBox titleRow = new HBox(8, itemLabel, priceLabel);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+
         Label descriptionLabel = new Label(item.getDescription());
         descriptionLabel.setWrapText(true);
 
-        VBox itemText = new VBox(4, itemLabel, descriptionLabel);
+        VBox itemText = new VBox(4, titleRow, descriptionLabel);
         HBox.setHgrow(itemText, Priority.ALWAYS);
 
         Button buyButton = new Button("Buy");
         buyButton.setOnAction(event -> buyItem(item));
 
-        HBox itemRow = new HBox(15, itemText, buyButton);
+        HBox itemRow = new HBox(15);
+        ImageView itemIcon = ImageAssets.itemIcon(item, 42);
+        if (itemIcon != null) {
+            itemRow.getChildren().add(itemIcon);
+        }
+        itemRow.getChildren().addAll(itemText, buyButton);
         itemRow.setAlignment(Pos.CENTER_LEFT);
         itemRow.setPadding(new Insets(8));
         return itemRow;
@@ -100,7 +111,7 @@ public class ShopScreen extends BorderPane {
             refreshShop();
         } else {
             messageLabel.setText("Not enough gold");
-            goldLabel.setText("Gold: " + player.getGold());
+            ImageAssets.setGoldAmount(goldLabel, "Gold: ", player.getGold());
         }
     }
 

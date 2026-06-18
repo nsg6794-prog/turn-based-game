@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
 import javafx.scene.text.TextAlignment;
@@ -22,6 +23,9 @@ public class CombatScreen extends VBox {
     private final Label enemyLabel = new Label();
     private final Label playerLabel = new Label();
     private final Label combatLog = new Label();
+    private final Label rewardExperienceLabel = new Label();
+    private final Label rewardGoldLabel = new Label();
+    private final HBox rewardRow = new HBox(8);
     private final Button attackButton = new Button("Attack");
     private final Button healButton = new Button("Heal");
     private final Button inventoryButton = new Button("Go to Inventory");
@@ -56,6 +60,11 @@ public class CombatScreen extends VBox {
         combatLog.setTextAlignment(TextAlignment.CENTER);
         combatLog.setAlignment(Pos.CENTER);
         combatLog.setMaxWidth(Double.MAX_VALUE);
+        rewardRow.setAlignment(Pos.CENTER);
+        rewardRow.getChildren().addAll(rewardExperienceLabel, rewardGoldLabel);
+        rewardRow.setVisible(false);
+        rewardRow.setManaged(false);
+        ImageAssets.applyAttackButtonGraphic(attackButton);
 
         attackButton.setOnAction(event -> playerAttack());
         healButton.setOnAction(event -> playerHeal());
@@ -82,9 +91,10 @@ public class CombatScreen extends VBox {
         HBox topBar = new HBox(statsAndInventory);
         topBar.setAlignment(Pos.TOP_LEFT);
         topBar.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(statsAndInventory, Priority.ALWAYS);
 
         getChildren().addAll(topBar, enemyLabel, combatLog, playerLabel, attackButton, healButton,
-                visitShopButton, nextEncounterButton, returnMenuButton);
+                rewardRow, visitShopButton, nextEncounterButton, returnMenuButton);
         updateHealthLabels();
         combatLog.setText("A wild " + enemy.getName() + " appears!");
     }
@@ -135,11 +145,11 @@ public class CombatScreen extends VBox {
                 levelUpRewardAvailable = player.hasPendingLevelUpReward();
             }
 
-            message += """
-
-                       Victory!
-                       Rewards: """ + enemy.getExperienceReward() + " XP and "
-                    + enemy.getGoldReward() + " gold.";
+            message += "\n\nVictory!";
+            rewardExperienceLabel.setText("Rewards: " + enemy.getExperienceReward() + " XP and");
+            ImageAssets.setGoldAmount(rewardGoldLabel, enemy.getGoldReward());
+            rewardRow.setVisible(true);
+            rewardRow.setManaged(true);
             setActionsDisabled(true);
             updatePostVictoryControls();
 

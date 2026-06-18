@@ -13,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
 
 public class InventoryUI extends BorderPane {
     private final Player player;
@@ -62,11 +63,16 @@ public class InventoryUI extends BorderPane {
     }
 
     private HBox createItemRow(Item item) {
-        Label itemLabel = new Label(item.getName() + " - " + item.getValue() + " gold");
+        Label itemLabel = new Label(item.getName());
+        Label valueLabel = new Label();
+        ImageAssets.setGoldAmount(valueLabel, item.getValue());
+        HBox titleRow = new HBox(8, itemLabel, valueLabel);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+
         Label descriptionLabel = new Label(buildItemDescription(item));
         descriptionLabel.setWrapText(true);
 
-        VBox itemText = new VBox(4, itemLabel, descriptionLabel);
+        VBox itemText = new VBox(4, titleRow, descriptionLabel);
         HBox.setHgrow(itemText, Priority.ALWAYS);
 
         Button useButton = new Button("Use");
@@ -76,7 +82,12 @@ public class InventoryUI extends BorderPane {
             useButton.setDisable(true);
         }
 
-        HBox itemRow = new HBox(15, itemText, useButton);
+        HBox itemRow = new HBox(15);
+        ImageView itemIcon = ImageAssets.itemIcon(item, 42);
+        if (itemIcon != null) {
+            itemRow.getChildren().add(itemIcon);
+        }
+        itemRow.getChildren().addAll(itemText, useButton);
         itemRow.setAlignment(Pos.CENTER_LEFT);
         itemRow.setPadding(new Insets(8));
         return itemRow;
