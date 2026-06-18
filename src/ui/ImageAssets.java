@@ -12,8 +12,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 final class ImageAssets {
-    private static final String ATTACK_BUTTON = "attack-button.png";
+    private static final String ATTACK_BUTTON = "attack-button-2.png";
     private static final String COMMON_HEALING_POTION = "common-healing-potion.png";
+    private static final String UNCOMMON_HEALING_POTION = "uncommon-healing-potion.png";
+    private static final String RARE_HEALING_POTION = "rare-healing-potion.png";
+    private static final String EPIC_HEALING_POTION = "epic-healing-potion.png";
+    private static final String LEGENDARY_HEALING_POTION = "legendary-healing-potion.png";
     private static final String GOLD_COIN = "gold-coin.png";
     private static final Map<String, Image> IMAGE_CACHE = new HashMap<>();
 
@@ -21,7 +25,7 @@ final class ImageAssets {
     }
 
     static void applyAttackButtonGraphic(Button button) {
-        ImageView graphic = imageView(ATTACK_BUTTON, 64, 64);
+        ImageView graphic = imageView(ATTACK_BUTTON, 56, 56);
 
         if (graphic == null) {
             return;
@@ -29,8 +33,8 @@ final class ImageAssets {
 
         button.setText("");
         button.setGraphic(graphic);
-        button.setMinSize(64, 64);
-        button.setPrefSize(64, 64);
+        button.setMinSize(56, 56);
+        button.setPrefSize(56, 56);
         button.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
     }
 
@@ -38,18 +42,36 @@ final class ImageAssets {
         setGoldAmount(label, "", amount);
     }
 
+    static void setGoldAmount(Label label, int amount, double iconSize) {
+        setGoldAmount(label, "", amount, iconSize);
+    }
+
     static void setGoldAmount(Label label, String prefix, int amount) {
+        setGoldAmount(label, prefix, amount, 18);
+    }
+
+    static void setGoldAmount(Label label, String prefix, int amount, double iconSize) {
         label.setText(prefix + amount);
-        label.setGraphic(imageView(GOLD_COIN, 18, 18));
+        label.setGraphic(imageView(GOLD_COIN, iconSize, iconSize));
         label.setGraphicTextGap(5);
     }
 
     static ImageView itemIcon(Item item, double size) {
-        if (item instanceof HPPot && item.getRarity() == 'C') {
-            return imageView(COMMON_HEALING_POTION, size, size);
+        if (item instanceof HPPot) {
+            return imageView(healingPotionIconName(item), size, size);
         }
 
         return null;
+    }
+
+    private static String healingPotionIconName(Item item) {
+        return switch (item.getRarity()) {
+            case 'U' -> UNCOMMON_HEALING_POTION;
+            case 'R' -> RARE_HEALING_POTION;
+            case 'E' -> EPIC_HEALING_POTION;
+            case 'L' -> LEGENDARY_HEALING_POTION;
+            default -> COMMON_HEALING_POTION;
+        };
     }
 
     private static ImageView imageView(String filename, double fitWidth, double fitHeight) {

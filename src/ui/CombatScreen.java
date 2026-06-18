@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
 import javafx.scene.text.TextAlignment;
@@ -27,7 +28,6 @@ public class CombatScreen extends VBox {
     private final Label rewardGoldLabel = new Label();
     private final HBox rewardRow = new HBox(8);
     private final Button attackButton = new Button("Attack");
-    private final Button healButton = new Button("Heal");
     private final Button inventoryButton = new Button("Go to Inventory");
     private final Button visitShopButton = new Button("Visit Shop");
     private final Button nextEncounterButton = new Button("Next Encounter");
@@ -67,7 +67,6 @@ public class CombatScreen extends VBox {
         ImageAssets.applyAttackButtonGraphic(attackButton);
 
         attackButton.setOnAction(event -> playerAttack());
-        healButton.setOnAction(event -> playerHeal());
         inventoryButton.setOnAction(event -> showInventory.run());
         visitShopButton.setOnAction(event -> {
             showShop.run();
@@ -93,8 +92,14 @@ public class CombatScreen extends VBox {
         topBar.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(statsAndInventory, Priority.ALWAYS);
 
-        getChildren().addAll(topBar, enemyLabel, combatLog, playerLabel, attackButton, healButton,
-                rewardRow, visitShopButton, nextEncounterButton, returnMenuButton);
+        Region actionSpacer = new Region();
+        VBox.setVgrow(actionSpacer, Priority.ALWAYS);
+
+        VBox actionBox = new VBox(8, attackButton, rewardRow, visitShopButton, nextEncounterButton, returnMenuButton);
+        actionBox.setAlignment(Pos.CENTER);
+        actionBox.setPadding(new Insets(0, 0, 36, 0));
+
+        getChildren().addAll(topBar, enemyLabel, combatLog, playerLabel, actionSpacer, actionBox);
         updateHealthLabels();
         combatLog.setText("A wild " + enemy.getName() + " appears!");
     }
@@ -108,13 +113,6 @@ public class CombatScreen extends VBox {
         }
 
         endTurn(message);
-    }
-
-    private void playerHeal() {
-        int healthBeforeHeal = player.getHealthpoints();
-        battle.heal(Battle.PLAYER_HEAL_AMOUNT, player);
-        int healthRecovered = player.getHealthpoints() - healthBeforeHeal;
-        endTurn(player.getName() + " healed for " + healthRecovered + " HP!\n" + enemyTurn());
     }
 
     private String enemyTurn() {
@@ -195,6 +193,5 @@ public class CombatScreen extends VBox {
 
     private void setActionsDisabled(boolean disabled) {
         attackButton.setDisable(disabled);
-        healButton.setDisable(disabled);
     }
 }

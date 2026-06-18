@@ -7,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 public class PlayerStatsPanel extends GridPane {
+    private static final int STATS_FONT_SIZE = 18;
+    private static final int STATS_GOLD_ICON_SIZE = 27;
+
     private final Player player;
     private final Label levelValue = new Label();
     private final Label experienceValue = new Label();
@@ -26,9 +29,10 @@ public class PlayerStatsPanel extends GridPane {
         agilityValue.setId("player-agility");
         intelligenceValue.setId("player-intelligence");
 
-        setHgap(10);
-        setVgap(5);
-        setPadding(new Insets(10));
+        setHgap(15);
+        setVgap(8);
+        setPadding(new Insets(15));
+        setStyle("-fx-font-size: " + STATS_FONT_SIZE + "px;");
 
         addRow(0, new Label("Level:"), levelValue);
         addRow(1, new Label("Current XP:"), experienceValue);
@@ -53,7 +57,7 @@ public class PlayerStatsPanel extends GridPane {
     public void refresh() {
         levelValue.setText(Integer.toString(player.getLevel()));
         experienceValue.setText(Integer.toString(player.getExperience()));
-        ImageAssets.setGoldAmount(goldValue, player.getGold());
+        ImageAssets.setGoldAmount(goldValue, player.getGold(), STATS_GOLD_ICON_SIZE);
         strengthValue.setText(Integer.toString(player.getStrength()));
         agilityValue.setText(Integer.toString(player.getAgility()));
         intelligenceValue.setText(Integer.toString(player.getIntelligence()));
