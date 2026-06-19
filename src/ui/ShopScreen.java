@@ -123,7 +123,7 @@ public class ShopScreen extends BorderPane {
         Scene previousScene = stage.getScene();
         return () -> {
             if (previousScene != null) {
-                GameApplication.showScene(stage, previousScene);
+                stage.setScene(previousScene);
             } else {
                 GameApplication.showMainMenu(stage);
             }
