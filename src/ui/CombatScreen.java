@@ -1,9 +1,11 @@
 package ui;
 
+import combat.ActionEconomy;
 import combat.Battle;
 import game.Enemy;
 import game.EncounterManager;
 import game.Player;
+import items.HPPot;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -20,14 +22,17 @@ public class CombatScreen extends VBox {
     private final Enemy enemy;
     private final EncounterManager encounterManager;
     private final Battle battle;
+    private final ActionEconomy actionEconomy = new ActionEconomy();
     private final PlayerStatsPanel playerStatsPanel;
     private final Label enemyLabel = new Label();
     private final Label playerLabel = new Label();
     private final Label combatLog = new Label();
+    private final Label actionEconomyLabel = new Label();
     private final Label rewardExperienceLabel = new Label();
     private final Label rewardGoldLabel = new Label();
     private final HBox rewardRow = new HBox(8);
     private final Button attackButton = new Button("Attack");
+    private final Button endTurnButton = new Button("End Turn");
     private final Button inventoryButton = new Button("Go to Inventory");
     private final Button visitShopButton = new Button("Visit Shop");
     private final Button nextEncounterButton = new Button("Next Encounter");
@@ -35,7 +40,7 @@ public class CombatScreen extends VBox {
     private final Runnable returnToMenu;
     private final Runnable showLevelUpRewards;
     private boolean victoryHandled;
-    
+
 
     public CombatScreen(Player player,
                         EncounterManager encounterManager,
@@ -52,10 +57,12 @@ public class CombatScreen extends VBox {
         this.showLevelUpRewards = showLevelUpRewards;
         this.battle = new Battle(player, this.enemy, () -> 1);
         this.playerStatsPanel = new PlayerStatsPanel(player);
+        this.actionEconomy.startTurn();
 
         setAlignment(Pos.TOP_CENTER);
         enemyLabel.setTextAlignment(TextAlignment.CENTER);
         playerLabel.setTextAlignment(TextAlignment.CENTER);
+        actionEconomyLabel.setTextAlignment(TextAlignment.CENTER);
         combatLog.setWrapText(true);
         combatLog.setTextAlignment(TextAlignment.CENTER);
         combatLog.setAlignment(Pos.CENTER);
@@ -67,6 +74,7 @@ public class CombatScreen extends VBox {
         ImageAssets.applyAttackButtonGraphic(attackButton);
 
         attackButton.setOnAction(event -> playerAttack());
+        endTurnButton.setOnAction(event -> playerEndsTurn());
         inventoryButton.setOnAction(event -> showInventory.run());
         visitShopButton.setOnAction(event -> {
             showShop.run();
@@ -95,24 +103,69 @@ public class CombatScreen extends VBox {
         Region actionSpacer = new Region();
         VBox.setVgrow(actionSpacer, Priority.ALWAYS);
 
-        VBox actionBox = new VBox(8, attackButton, rewardRow, visitShopButton, nextEncounterButton, returnMenuButton);
+        VBox actionBox = new VBox(8,
+                actionEconomyLabel,
+                attackButton,
+                endTurnButton,
+                rewardRow,
+                visitShopButton,
+                nextEncounterButton,
+                returnMenuButton);
         actionBox.setAlignment(Pos.CENTER);
         actionBox.setPadding(new Insets(0, 0, 36, 0));
 
         getChildren().addAll(topBar, enemyLabel, combatLog, playerLabel, actionSpacer, actionBox);
         updateHealthLabels();
+        updateActionControls();
         combatLog.setText("A wild " + enemy.getName() + " appears!");
     }
 
     private void playerAttack() {
+        if (!actionEconomy.spendActionPoint()) {
+            updateActionControls();
+            return;
+        }
+
         int damage = battle.attack(player, enemy);
         String message = player.getName() + " attacked " + enemy.getName() + " for " + damage + " damage!";
 
-        if (enemy.isAlive()) {
+        if (enemy.isAlive() && actionEconomy.isTurnFinished()) {
             message += "\n" + enemyTurn();
+            startNewPlayerTurnIfCombatContinues();
         }
 
-        endTurn(message);
+        resolveCombatState(message);
+    }
+
+    private void playerEndsTurn() {
+        actionEconomy.endTurn();
+        String message = player.getName() + " ended the turn.";
+
+        if (enemy.isAlive() && actionEconomy.isTurnFinished()) {
+            message += "\n" + enemyTurn();
+            startNewPlayerTurnIfCombatContinues();
+        }
+
+        resolveCombatState(message);
+    }
+
+    String usePotionFromInventory(HPPot potion) {
+        if (!actionEconomy.spendBonusActionPoint()) {
+            updateActionControls();
+            return "No bonus action left.";
+        }
+
+        potion.consume(player);
+        player.getInventory().removeItem(potion);
+
+        String message = "Used " + potion.getName();
+        if (enemy.isAlive() && actionEconomy.isTurnFinished()) {
+            message += "\n" + enemyTurn();
+            startNewPlayerTurnIfCombatContinues();
+        }
+
+        resolveCombatState(message);
+        return message;
     }
 
     private String enemyTurn() {
@@ -129,7 +182,13 @@ public class CombatScreen extends VBox {
         return enemy.getName() + " healed for " + healthRecovered + " HP!";
     }
 
-    private void endTurn(String message) {
+    private void startNewPlayerTurnIfCombatContinues() {
+        if (player.isAlive() && enemy.isAlive()) {
+            actionEconomy.startTurn();
+        }
+    }
+
+    private void resolveCombatState(String message) {
         updateHealthLabels();
         boolean levelUpRewardAvailable = false;
 
@@ -157,6 +216,7 @@ public class CombatScreen extends VBox {
         }
 
         playerStatsPanel.refresh();
+        updateActionControls();
         combatLog.setText(message);
 
         if (levelUpRewardAvailable) {
@@ -167,12 +227,14 @@ public class CombatScreen extends VBox {
     void restoreAfterLevelUp() {
         updateHealthLabels();
         playerStatsPanel.refresh();
+        updateActionControls();
         updatePostVictoryControls();
     }
 
     void restoreAfterInventory() {
         updateHealthLabels();
         playerStatsPanel.refresh();
+        updateActionControls();
         updatePostVictoryControls();
     }
 
@@ -192,6 +254,21 @@ public class CombatScreen extends VBox {
     }
 
     private void setActionsDisabled(boolean disabled) {
-        attackButton.setDisable(disabled);
+        if (disabled) {
+            attackButton.setDisable(true);
+            endTurnButton.setDisable(true);
+            return;
+        }
+
+        updateActionControls();
+    }
+
+    private void updateActionControls() {
+        actionEconomyLabel.setText("Action Points: " + actionEconomy.getActionPoints()
+                + " | Bonus Action Points: " + actionEconomy.getBonusActionPoints());
+
+        boolean combatActive = player.isAlive() && enemy.isAlive();
+        attackButton.setDisable(!combatActive || !actionEconomy.hasActionPoints());
+        endTurnButton.setDisable(!combatActive);
     }
 }

@@ -3,8 +3,10 @@ package ui;
 import game.EncounterManager;
 import game.Main;
 import game.Player;
+import items.HPPot;
 import items.Shop;
 
+import java.util.function.Function;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -44,10 +46,14 @@ public class GameApplication extends Application {
                     encounterManager.moveToNextEncounter();
                     showCombatScreen(stage, player, encounterManager);
                 },
-                () -> showInventoryScreen(stage, player, () -> {
-                    combatScreenReference[0].restoreAfterInventory();
-                    stage.setScene(combatScene[0]);
-                }),
+                () -> showInventoryScreen(
+                        stage,
+                        player,
+                        () -> {
+                            combatScreenReference[0].restoreAfterInventory();
+                            stage.setScene(combatScene[0]);
+                        },
+                        potion -> combatScreenReference[0].usePotionFromInventory(potion)),
                 () -> showLevelUpRewardScreen(stage, player, () -> {
                     combatScreenReference[0].restoreAfterLevelUp();
                     stage.setScene(combatScene[0]);
@@ -71,8 +77,11 @@ public class GameApplication extends Application {
                 WINDOW_WIDTH, WINDOW_HEIGHT));
     }
 
-    private static void showInventoryScreen(Stage stage, Player player, Runnable returnToCombat) {
-        stage.setScene(new Scene(new InventoryUI(player, returnToCombat), WINDOW_WIDTH, WINDOW_HEIGHT));
+    private static void showInventoryScreen(Stage stage,
+                                            Player player,
+                                            Runnable returnToCombat,
+                                            Function<HPPot, String> usePotion) {
+        stage.setScene(new Scene(new InventoryUI(player, returnToCombat, usePotion), WINDOW_WIDTH, WINDOW_HEIGHT));
     }
 
     private static void showLevelUpRewardScreen(Stage stage, Player player, Runnable returnToCombat) {

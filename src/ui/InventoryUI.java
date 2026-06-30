@@ -4,6 +4,7 @@ import game.Player;
 import items.HPPot;
 import items.Item;
 import items.Weapon;
+import java.util.function.Function;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -18,13 +19,15 @@ import javafx.scene.image.ImageView;
 public class InventoryUI extends BorderPane {
     private final Player player;
     private final Runnable returnToPrevious;
+    private final Function<HPPot, String> usePotion;
     private final Label healthLabel = new Label();
     private final Label messageLabel = new Label();
     private final VBox itemList = new VBox(10);
 
-    public InventoryUI(Player player, Runnable returnToPrevious) {
+    public InventoryUI(Player player, Runnable returnToPrevious, Function<HPPot, String> usePotion) {
         this.player = player;
         this.returnToPrevious = returnToPrevious;
+        this.usePotion = usePotion;
 
         Label titleLabel = new Label("Inventory");
         Button backButton = new Button("Back");
@@ -108,9 +111,7 @@ public class InventoryUI extends BorderPane {
     }
 
     private void usePotion(HPPot potion) {
-        potion.consume(player);
-        player.getInventory().removeItem(potion);
-        messageLabel.setText("Used " + potion.getName());
+        messageLabel.setText(usePotion.apply(potion));
         refreshInventory();
     }
 }
