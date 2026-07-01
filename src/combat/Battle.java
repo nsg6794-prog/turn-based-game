@@ -67,7 +67,11 @@ public class Battle {
     public int calculateDamage(GameCharacter attacker) {
         int strengthBonus = attacker.getStrength() / 5;
         int damageRoll = (int)(Math.random() * 8) + 1;
-        return strengthBonus + damageRoll;
+        int weaponDamage = 0;
+        if (attacker instanceof Player) {
+            weaponDamage = player.getEquippedWeaponDamage();
+        }
+        return strengthBonus + damageRoll + weaponDamage;
     }
     public int attack(GameCharacter attacker, GameCharacter defender) {
         int damage = calculateDamage(attacker);

@@ -78,11 +78,14 @@ public class InventoryUI extends BorderPane {
         VBox itemText = new VBox(4, titleRow, descriptionLabel);
         HBox.setHgrow(itemText, Priority.ALWAYS);
 
-        Button useButton = new Button("Use");
+        Button itemActionButton = new Button("Use");
         if (item instanceof HPPot potion) {
-            useButton.setOnAction(event -> usePotion(potion));
+            itemActionButton.setOnAction(event -> usePotion(potion));
+        } else if (item instanceof Weapon weapon) {
+            itemActionButton.setText("Equip");
+            itemActionButton.setOnAction(event -> equipWeapon(weapon));
         } else {
-            useButton.setDisable(true);
+            itemActionButton.setDisable(true);
         }
 
         HBox itemRow = new HBox(15);
@@ -90,7 +93,7 @@ public class InventoryUI extends BorderPane {
         if (itemIcon != null) {
             itemRow.getChildren().add(itemIcon);
         }
-        itemRow.getChildren().addAll(itemText, useButton);
+        itemRow.getChildren().addAll(itemText, itemActionButton);
         itemRow.setAlignment(Pos.CENTER_LEFT);
         itemRow.setPadding(new Insets(8));
         return itemRow;
@@ -112,6 +115,12 @@ public class InventoryUI extends BorderPane {
 
     private void usePotion(HPPot potion) {
         messageLabel.setText(usePotion.apply(potion));
+        refreshInventory();
+    }
+
+    private void equipWeapon(Weapon weapon) {
+        player.equipWeapon(weapon);
+        messageLabel.setText("Equipped " + weapon.getName());
         refreshInventory();
     }
 }

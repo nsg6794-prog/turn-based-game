@@ -119,16 +119,37 @@ public class Player extends GameCharacter {
         System.out.println(getName() + " leveled up to level " + level + "!");
     }
     public Inventory getInventory() {
-    return inventory;
-    }
-    public boolean spendGold(int amount) {
-    if (gold < amount) {
-        return false;
+        return inventory;
     }
 
-    gold -= amount;
-    return true;
+    public boolean spendGold(int amount) {
+        if (gold < amount) {
+            return false;
+        }
+
+        gold -= amount;
+        return true;
     }
+
     private Weapon equippedWeapon;
-    private Inventory inventory1 = new Inventory();
+
+    public void equipWeapon(Weapon weapon) {
+        this.equippedWeapon = weapon;
+        notifyStatsChanged();
+    }
+
+    public Weapon getEquippedWeapon() {
+        return equippedWeapon;
+    }
+
+    public boolean hasEquippedWeapon() {
+        return equippedWeapon != null;
+    }
+
+    public int getEquippedWeaponDamage() {
+        if (equippedWeapon == null) {
+            return 0;
+        }
+        return equippedWeapon.getDamage();
+    }
 }

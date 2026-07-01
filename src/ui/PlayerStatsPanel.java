@@ -1,6 +1,7 @@
 package ui;
 
 import game.Player;
+import items.Weapon;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -17,6 +18,7 @@ public class PlayerStatsPanel extends GridPane {
     private final Label strengthValue = new Label();
     private final Label agilityValue = new Label();
     private final Label intelligenceValue = new Label();
+    private final Label weaponValue = new Label();
     private final Runnable refreshListener = this::refreshOnFxThread;
 
     public PlayerStatsPanel(Player player) {
@@ -28,6 +30,7 @@ public class PlayerStatsPanel extends GridPane {
         strengthValue.setId("player-strength");
         agilityValue.setId("player-agility");
         intelligenceValue.setId("player-intelligence");
+        weaponValue.setId("player-weapon");
 
         setHgap(15);
         setVgap(8);
@@ -40,6 +43,7 @@ public class PlayerStatsPanel extends GridPane {
         addRow(3, new Label("Strength:"), strengthValue);
         addRow(4, new Label("Agility:"), agilityValue);
         addRow(5, new Label("Intelligence:"), intelligenceValue);
+        add(weaponValue, 0, 6, 2, 1);
 
         sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (oldScene != null) {
@@ -61,6 +65,7 @@ public class PlayerStatsPanel extends GridPane {
         strengthValue.setText(Integer.toString(player.getStrength()));
         agilityValue.setText(Integer.toString(player.getAgility()));
         intelligenceValue.setText(Integer.toString(player.getIntelligence()));
+        weaponValue.setText(formatEquippedWeapon());
     }
 
     public void dispose() {
@@ -73,5 +78,14 @@ public class PlayerStatsPanel extends GridPane {
         } else {
             Platform.runLater(this::refresh);
         }
+    }
+
+    private String formatEquippedWeapon() {
+        Weapon weapon = player.getEquippedWeapon();
+        if (weapon == null) {
+            return "Weapon: None";
+        }
+
+        return "Weapon: " + weapon.getName() + " (+" + weapon.getDamage() + " damage)";
     }
 }
