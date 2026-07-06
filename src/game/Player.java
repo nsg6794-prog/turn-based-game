@@ -4,6 +4,7 @@ import items.Inventory;
 import items.Weapon;
 import java.util.ArrayList;
 import java.util.List;
+import spells.Spell;
 
 public class Player extends GameCharacter {
     public enum LevelUpReward {
@@ -40,6 +41,7 @@ public class Player extends GameCharacter {
         this.level = level;
         this.experience = experience;
         this.experienceToNextLevel = INITIAL_EXPERIENCE_TO_NEXT_LEVEL;
+        learnSpell(Spell.FIRE_BOLT);
     }
 
     public void gainExperience(int amount) {

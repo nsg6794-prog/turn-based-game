@@ -1,6 +1,6 @@
 package game;
 
-import Spells.Spell;
+import spells.Spell;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +116,4 @@ public abstract class GameCharacter {
     public List<Spell> getKnownSpells() {
         return knownSpells;
     }
-    player.learnSpell(Spell.FIRE_BOLT);
-    enemy.learnSpell(Spell.SHADOW_BOLT);
-
 }

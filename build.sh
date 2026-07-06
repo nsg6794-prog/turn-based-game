@@ -13,7 +13,7 @@ compile_to() {
     --module-path "$JAVAFX_LIB" \
     --add-modules javafx.controls \
     -d "$output_dir" \
-    src/game/*.java src/combat/*.java src/items/*.java src/ui/*.java
+    src/Spells/*.java src/game/*.java src/combat/*.java src/items/*.java src/ui/*.java
 
   if [ -d assets ]; then
     mkdir -p "$output_dir/assets"

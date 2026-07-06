@@ -6,6 +6,7 @@ import game.Enemy;
 import game.EncounterManager;
 import game.Player;
 import items.HPPot;
+import spells.Spell;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -32,11 +33,13 @@ public class CombatScreen extends VBox {
     private final Label rewardGoldLabel = new Label();
     private final HBox rewardRow = new HBox(8);
     private final Button attackButton = new Button("Attack");
+    private final Button spellsButton = new Button("Spells");
     private final Button endTurnButton = new Button("End Turn");
     private final Button inventoryButton = new Button("Go to Inventory");
     private final Button visitShopButton = new Button("Visit Shop");
     private final Button nextEncounterButton = new Button("Next Encounter");
     private final Button returnMenuButton = new Button("Return to Menu");
+    private final VBox spellListPanel = new VBox(6);
     private final Runnable returnToMenu;
     private final Runnable showLevelUpRewards;
     private boolean victoryHandled;
@@ -74,6 +77,7 @@ public class CombatScreen extends VBox {
         ImageAssets.applyAttackButtonGraphic(attackButton);
 
         attackButton.setOnAction(event -> playerAttack());
+        spellsButton.setOnAction(event -> showSpellList());
         endTurnButton.setOnAction(event -> playerEndsTurn());
         inventoryButton.setOnAction(event -> showInventory.run());
         visitShopButton.setOnAction(event -> {
@@ -91,6 +95,10 @@ public class CombatScreen extends VBox {
         visitShopButton.setManaged(false);
         nextEncounterButton.setVisible(false);
         nextEncounterButton.setManaged(false);
+        spellListPanel.setAlignment(Pos.CENTER);
+        spellListPanel.setPadding(new Insets(8));
+        spellListPanel.setVisible(false);
+        spellListPanel.setManaged(false);
 
         VBox statsAndInventory = new VBox(5, playerStatsPanel, inventoryButton);
         statsAndInventory.setAlignment(Pos.TOP_LEFT);
@@ -106,6 +114,8 @@ public class CombatScreen extends VBox {
         VBox actionBox = new VBox(8,
                 actionEconomyLabel,
                 attackButton,
+                spellsButton,
+                spellListPanel,
                 endTurnButton,
                 rewardRow,
                 visitShopButton,
@@ -139,10 +149,10 @@ public class CombatScreen extends VBox {
 
     private void playerEndsTurn() {
         actionEconomy.endTurn();
-        String message = player.getName() + " ended the turn.";
+        String message = "";
 
         if (enemy.isAlive() && actionEconomy.isTurnFinished()) {
-            message += "\n" + enemyTurn();
+            message = enemyTurn();
             startNewPlayerTurnIfCombatContinues();
         }
 
@@ -166,6 +176,101 @@ public class CombatScreen extends VBox {
 
         resolveCombatState(message);
         return message;
+    }
+
+    private void showSpellList() {
+        refreshSpellList();
+        setSpellListVisible(true);
+    }
+
+    private void closeSpellList() {
+        setSpellListVisible(false);
+    }
+
+    private void setSpellListVisible(boolean visible) {
+        spellListPanel.setVisible(visible);
+        spellListPanel.setManaged(visible);
+    }
+
+    private void refreshSpellList() {
+        spellListPanel.getChildren().clear();
+
+        Label titleLabel = new Label("Spells");
+        spellListPanel.getChildren().add(titleLabel);
+
+        if (player.getKnownSpells().isEmpty()) {
+            spellListPanel.getChildren().add(new Label("No spells known."));
+        } else {
+            for (Spell spell : player.getKnownSpells()) {
+                spellListPanel.getChildren().add(createSpellRow(spell));
+            }
+        }
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(event -> closeSpellList());
+        spellListPanel.getChildren().add(backButton);
+    }
+
+    private HBox createSpellRow(Spell spell) {
+        Label spellLabel = new Label(spell.getName() + formatSpellCost(spell));
+        Button castButton = new Button("Cast");
+        castButton.setDisable(!isCombatActive() || !canAffordSpell(spell));
+        castButton.setOnAction(event -> castSpell(spell));
+
+        HBox spellRow = new HBox(10, spellLabel, castButton);
+        spellRow.setAlignment(Pos.CENTER);
+        return spellRow;
+    }
+
+    private String formatSpellCost(Spell spell) {
+        return " (AP: " + spell.getActionPointCost()
+                + ", Bonus AP: " + spell.getBonusActionPointCost() + ")";
+    }
+
+    private boolean canAffordSpell(Spell spell) {
+        return actionEconomy.getActionPoints() >= spell.getActionPointCost()
+                && actionEconomy.getBonusActionPoints() >= spell.getBonusActionPointCost();
+    }
+
+    private void castSpell(Spell spell) {
+        if (actionEconomy.getActionPoints() < spell.getActionPointCost()) {
+            combatLog.setText("Not enough action points.");
+            refreshSpellList();
+            updateActionControls();
+            return;
+        }
+
+        if (actionEconomy.getBonusActionPoints() < spell.getBonusActionPointCost()) {
+            combatLog.setText("Not enough bonus action points.");
+            refreshSpellList();
+            updateActionControls();
+            return;
+        }
+
+        spendSpellCosts(spell);
+        int enemyHealthBeforeCast = enemy.getHealthpoints();
+        spell.cast(player, enemy);
+        int damageTaken = Math.max(0, enemyHealthBeforeCast - enemy.getHealthpoints());
+        closeSpellList();
+
+        String message = player.getName() + " casts " + spell.getName() + " on " + enemy.getName()
+                + " for " + damageTaken + " damage.";
+        if (enemy.getHealthpoints() > 0 && actionEconomy.isTurnFinished()) {
+            message += "\n" + enemyTurn();
+            startNewPlayerTurnIfCombatContinues();
+        }
+
+        resolveCombatState(message);
+    }
+
+    private void spendSpellCosts(Spell spell) {
+        for (int i = 0; i < spell.getActionPointCost(); i++) {
+            actionEconomy.spendActionPoint();
+        }
+
+        for (int i = 0; i < spell.getBonusActionPointCost(); i++) {
+            actionEconomy.spendBonusActionPoint();
+        }
     }
 
     private String enemyTurn() {
@@ -195,7 +300,7 @@ public class CombatScreen extends VBox {
         if (!player.isAlive()) {
             message += "\nDefeat!";
             setActionsDisabled(true);
-        } else if (!enemy.isAlive()) {
+        } else if (enemy.getHealthpoints() <= 0) {
             if (!victoryHandled) {
                 battle.awardVictoryRewards();
                 victoryHandled = true;
@@ -256,7 +361,9 @@ public class CombatScreen extends VBox {
     private void setActionsDisabled(boolean disabled) {
         if (disabled) {
             attackButton.setDisable(true);
+            spellsButton.setDisable(true);
             endTurnButton.setDisable(true);
+            closeSpellList();
             return;
         }
 
@@ -267,8 +374,17 @@ public class CombatScreen extends VBox {
         actionEconomyLabel.setText("Action Points: " + actionEconomy.getActionPoints()
                 + " | Bonus Action Points: " + actionEconomy.getBonusActionPoints());
 
-        boolean combatActive = player.isAlive() && enemy.isAlive();
+        boolean combatActive = isCombatActive();
         attackButton.setDisable(!combatActive || !actionEconomy.hasActionPoints());
+        spellsButton.setDisable(!combatActive || player.getKnownSpells().isEmpty());
         endTurnButton.setDisable(!combatActive);
+
+        if (spellListPanel.isManaged()) {
+            refreshSpellList();
+        }
+    }
+
+    private boolean isCombatActive() {
+        return player.isAlive() && enemy.isAlive();
     }
 }

@@ -14,7 +14,7 @@ public class Main {
     }
 
     public static Player createPlayer() {
-        return new Player("Player", 100, 100, 20, 20, 1000, 1000, 1000, 1, 0);
+        return new Player("Player", 100, 100, 20, 0, 12, 20, 30, 1, 0);
     }
 
 }
